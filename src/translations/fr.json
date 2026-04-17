@@ -188,6 +188,7 @@
     "col_price": "Prix",
     "col_stock": "Stock",
     "col_actions": "Actions",
+    "edit": "Modifier",
     "delete": "Supprimer",
     "no_products": "Vous n'avez encore listé aucun produit.",
     "settings_title": "Paramètres du Compte",

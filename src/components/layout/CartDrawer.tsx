@@ -57,7 +57,7 @@ export function CartDrawer() {
                 <ShoppingBag className="h-16 w-16 mb-4 opacity-50" />
                 <p className="text-lg font-medium">{t("cart.empty")}</p>
                 <Link 
-                  href="/shop" 
+                  href="/catalogue" 
                   className="mt-6 px-6 py-2 bg-primary text-white rounded-md hover:bg-primary-light transition-colors"
                   onClick={() => setIsCartOpen(false)}
                 >

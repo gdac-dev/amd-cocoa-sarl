@@ -30,7 +30,7 @@ export async function Hero() {
         </p>
         <div className="flex flex-col sm:flex-row justify-center gap-4">
           <Link
-            href="/shop"
+            href="/catalogue"
             className="inline-flex items-center justify-center px-8 py-4 text-base font-bold rounded-sm text-primary bg-accent hover:bg-[#d4a844] transition-all shadow-lg hover:shadow-xl hover:-translate-y-1"
           >
             {t("hero.shop_now")}

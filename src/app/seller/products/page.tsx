@@ -60,7 +60,7 @@ export default async function SellerProductsPage() {
                   </span>
                 </td>
                 <td className="p-4 flex space-x-3 items-center pt-6">
-                   <Link href={`/seller/products/${product.id}/edit`} className="text-blue-500 hover:underline text-sm font-medium">Edit</Link>
+                   <Link href={`/seller/products/${product.id}/edit`} className="text-blue-500 hover:underline text-sm font-medium">{t("seller.edit")}</Link>
                    <form action={deleteProduct}>
                      <input type="hidden" name="id" value={product.id} />
                      <button type="submit" className="text-red-500 hover:underline text-sm font-medium">{t("seller.delete")}</button>

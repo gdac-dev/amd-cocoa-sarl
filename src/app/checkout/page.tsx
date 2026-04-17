@@ -35,7 +35,7 @@ export default function CheckoutPage() {
         <h1 className="text-3xl font-bold text-primary mb-4">{t("checkout.empty_title")}</h1>
         <p className="text-cocoa-500 mb-8">{t("checkout.empty_subtitle")}</p>
         <Link 
-          href="/shop" 
+          href="/catalogue" 
           className="px-8 py-3 bg-accent text-primary font-bold rounded hover:bg-[#d4a844] transition-colors"
         >
           {t("checkout.return_shop")}

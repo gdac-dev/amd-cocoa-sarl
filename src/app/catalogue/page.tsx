@@ -82,12 +82,12 @@ export default async function CataloguePage(props: { searchParams?: Promise<{ ca
         </div>
 
         {/* Categories Dynamic Pilling */}
-        <div className="flex flex-wrap gap-2 mb-8">
-          <Link href="/catalogue" className={`px-4 py-1.5 rounded-full text-sm font-medium transition-colors border ${!categorySlug ? 'bg-primary text-white border-primary' : 'bg-white text-primary border-cocoa-200 hover:border-accent'}`}>
+        <div className="flex overflow-x-auto scrollbar-hide flex-nowrap gap-2 mb-8 pb-2">
+          <Link href="/catalogue" className={`shrink-0 px-4 py-1.5 rounded-full text-sm font-medium transition-colors border ${!categorySlug ? 'bg-primary text-white border-primary' : 'bg-white text-primary border-cocoa-200 hover:border-accent'}`}>
             {t("footer.all_products")}
           </Link>
           {categories.map(cat => (
-             <Link key={cat.id} href={`/catalogue?category=${cat.slug}`} className={`px-4 py-1.5 rounded-full text-sm font-medium transition-colors border ${categorySlug === cat.slug ? 'bg-primary text-white border-primary' : 'bg-white text-primary border-cocoa-200 hover:border-accent'}`}>
+             <Link key={cat.id} href={`/catalogue?category=${cat.slug}`} className={`shrink-0 px-4 py-1.5 rounded-full text-sm font-medium transition-colors border ${categorySlug === cat.slug ? 'bg-primary text-white border-primary' : 'bg-white text-primary border-cocoa-200 hover:border-accent'}`}>
                {cat.name}
              </Link>
           ))}
