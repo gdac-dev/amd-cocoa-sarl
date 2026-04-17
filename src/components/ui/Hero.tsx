@@ -25,7 +25,7 @@ export async function Hero() {
         <h1 className="text-4xl sm:text-5xl md:text-7xl font-extrabold text-beige tracking-tight mb-6 drop-shadow-lg">
           {t("hero.title_part1")} <span className="text-accent">{t("hero.title_part2")}</span>
         </h1>
-        <p className="mt-4 text-xl sm:text-2xl text-cocoa-200 max-w-3xl mx-auto font-light leading-relaxed mb-10">
+        <p className="mt-4 text-xl sm:text-2xl text-white max-w-3xl mx-auto font-light leading-relaxed mb-10">
           {t("hero.subtitle")}
         </p>
         <div className="flex flex-col sm:flex-row justify-center gap-4">
