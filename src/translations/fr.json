@@ -244,5 +244,27 @@
     "hero_title": "Foire Aux Questions",
     "hero_desc": "Trouvez des réponses aux questions courantes sur notre plateforme ou la logistique. Vous ne trouvez pas l'info ? ",
     "hero_link": "Contactez-nous"
+  },
+  "admin": {
+    "nav_dashboard": "Tableau de Bord",
+    "nav_products": "Produits",
+    "nav_categories": "Catégories",
+    "nav_orders": "Commandes",
+    "nav_users": "Utilisateurs",
+    "nav_messages": "Messages",
+    "nav_chatbot": "Journaux Chatbot",
+    "nav_settings": "Paramètres",
+    "nav_logout": "Se déconnecter",
+    "welcome": "Bon retour",
+    "view_public": "Voir l'App Publique",
+    "total_users": "Total Utilisateurs",
+    "total_orders": "Total Commandes",
+    "total_revenue": "Revenu Total",
+    "recent_unread": "Messages non lus récents",
+    "view_all": "Voir tout",
+    "no_unread": "À jour ! Aucun message non lu.",
+    "unanswered_chatbot": "Requêtes Chatbot Sans Réponse",
+    "view_logs": "Voir les Journaux",
+    "no_unanswered": "Aucune question sans réponse. Le bot fait un excellent travail !"
   }
 }

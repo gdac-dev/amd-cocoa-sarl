@@ -256,5 +256,27 @@
     "hero_title": "Frequently Asked Questions",
     "hero_desc": "Find answers to common questions about our platform, sourcing, and logistics. Cannot find what you're looking for? ",
     "hero_link": "Contact us"
+  },
+  "admin": {
+    "nav_dashboard": "Dashboard",
+    "nav_products": "Products",
+    "nav_categories": "Categories",
+    "nav_orders": "Orders",
+    "nav_users": "Users",
+    "nav_messages": "Messages",
+    "nav_chatbot": "Chatbot Logs",
+    "nav_settings": "Settings",
+    "nav_logout": "Log out",
+    "welcome": "Welcome back",
+    "view_public": "View Public App",
+    "total_users": "Total Users",
+    "total_orders": "Total Orders",
+    "total_revenue": "Total Revenue",
+    "recent_unread": "Recent Unread Messages",
+    "view_all": "View All",
+    "no_unread": "All caught up! No unread messages.",
+    "unanswered_chatbot": "Unanswered Chatbot Queries",
+    "view_logs": "View Logs",
+    "no_unanswered": "No unanswered questions. The bot is doing great!"
   }
 }
