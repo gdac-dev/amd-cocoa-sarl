@@ -1,0 +1,101 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String   @id @default(cuid())
+  name         String?
+  email        String   @unique
+  passwordHash String
+  role         String   @default("USER") // USER | ADMIN
+  isActive     Boolean  @default(true)
+  createdAt    DateTime @default(now())
+
+  // Seller fields
+  isSeller         Boolean  @default(false)
+  isApproved       Boolean  @default(false)
+  shopName         String?
+  isEmailVerified  Boolean  @default(true)
+
+  // 2FA fields
+  twoFactorEnabled Boolean @default(false)
+  twoFactorCode    String?
+  twoFactorCodeExpires DateTime?
+
+  // Relations
+  products     Product[]
+}
+
+model Category {
+  id          String    @id @default(cuid())
+  name        String
+  slug        String    @unique
+  description String?
+  products    Product[]
+  createdAt   DateTime  @default(now())
+}
+
+model Product {
+  id               String   @id @default(cuid())
+  name             String
+  slug             String   @unique
+  description      String
+  shortDescription String
+  price            Float
+  stock            Int      @default(0)
+  unit             String   @default("Unit(s)")
+  image            String?
+  categoryId       String
+  category         Category @relation(fields: [categoryId], references: [id])
+  sellerId         String?
+  seller           User?    @relation(fields: [sellerId], references: [id])
+  createdAt        DateTime @default(now())
+}
+
+model Order {
+  id            String      @id @default(cuid())
+  customerName  String
+  customerPhone String
+  customerAddr  String
+  customerCity  String
+  customerEmail String?
+  totalPrice    Float
+  status        String      @default("PENDING") // PENDING | PAID | SHIPPED | DELIVERED | CANCELLED
+  paymentMethod String
+  items         OrderItem[]
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+}
+
+model OrderItem {
+  id          String   @id @default(cuid())
+  orderId     String
+  order       Order    @relation(fields: [orderId], references: [id])
+  productId   String
+  productName String
+  price       Float
+  quantity    Int
+}
+
+model ContactMessage {
+  id        String   @id @default(cuid())
+  name      String
+  email     String
+  phone     String?
+  subject   String?
+  message   String
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
+}
+
+model ChatbotLog {
+  id         String   @id @default(cuid())
+  query      String
+  isAnswered Boolean
+  createdAt  DateTime @default(now())
+}

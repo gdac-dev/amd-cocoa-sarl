@@ -1,65 +1,84 @@
-import Image from "next/image";
+import { Hero } from "@/components/ui/Hero";
+import { ProductCard } from "@/components/ui/ProductCard";
+import { prisma } from "@/lib/prisma";
+import { getTranslation } from "@/lib/translations";
+import Link from "next/link";
+import { ChevronRight } from "lucide-react";
 
-export default function Home() {
+export default async function Home() {
+  const { t } = await getTranslation();
+  const bestSellers = await prisma.product.findMany({
+    take: 3,
+    orderBy: { createdAt: "asc" },
+    include: { category: true }
+  });
+
+  const categories = await prisma.category.findMany();
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    <div className="flex flex-col min-h-screen">
+      <Hero />
+      
+      {/* Dynamic Categories Section */}
+      <section className="pt-16 pb-8 bg-beige">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-center space-x-4 overflow-x-auto pb-4 hide-scrollbar">
+            {categories.map(cat => (
+              <Link 
+                key={cat.id} 
+                href={`/catalogue?category=${cat.slug}`}
+                className="px-6 py-2 rounded-full border border-cocoa-200 text-primary whitespace-nowrap hover:border-accent hover:text-accent hover:bg-amber-50 transition-colors font-medium"
+              >
+                {cat.name}
+              </Link>
+            ))}
+          </div>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+      </section>
+
+      <section id="bestsellers" className="py-16 bg-beige scroll-mt-20">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl md:text-4xl font-bold text-primary tracking-tight">{t("home.best_sellers")}</h2>
+            <div className="mt-4 flex justify-center">
+              <div className="h-1 w-24 bg-accent rounded"></div>
+            </div>
+            <p className="mt-6 text-lg text-cocoa-500 max-w-2xl mx-auto">
+              {t("home.best_sellers_desc")}
+            </p>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+            {bestSellers.map((product) => (
+              <ProductCard key={product.id} product={product} />
+            ))}
+          </div>
         </div>
-      </main>
+      </section>
+
+      {/* Featured Highlight Section */}
+      <section className="py-24 bg-primary text-beige">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 bg-cocoa-900 rounded-3xl p-8 md:p-16 border border-cocoa-800 shadow-xl overflow-hidden relative">
+          <div className="relative z-10 lg:w-1/2">
+            <h2 className="text-3xl sm:text-4xl font-bold mb-6 text-white">{t("home.amd_diff")}</h2>
+            <p className="text-lg text-cocoa-200 mb-8 font-light leading-relaxed">
+              {t("home.amd_diff_desc")}
+            </p>
+            <div className="flex gap-4">
+              <div className="bg-cocoa-800 p-4 rounded-xl border border-cocoa-700 w-1/2">
+                <p className="text-3xl font-bold text-accent mb-2">100%</p>
+                <p className="text-sm text-cocoa-300">{t("footer.organic")}</p>
+              </div>
+              <div className="bg-cocoa-800 p-4 rounded-xl border border-cocoa-700 w-1/2">
+                <p className="text-3xl font-bold text-accent mb-2">50+</p>
+                <p className="text-sm text-cocoa-300">{t("footer.partner_farms")}</p>
+              </div>
+            </div>
+          </div>
+          {/* Abstract background decorative elements */}
+          <div className="absolute right-0 top-0 w-1/2 h-full opacity-10 bg-accent rounded-l-full filter blur-3xl transform translate-x-1/3"></div>
+        </div>
+      </section>
     </div>
   );
 }

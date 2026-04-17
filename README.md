@@ -1,36 +1,38 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# AMD Cocoa Sarl
 
-## Getting Started
+A premium, full-stack, bilingual (English & French) E-Commerce Web Application specifically tailored for high-end cocoa products directly from Cameroon. Handcrafted for B2C & B2B interactions, integrating modern front-end architectures with a robust SQLite-backed Node backend.
 
-First, run the development server:
+## Features
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+- **Full Bilingual Capabilities**: Built entirely with dynamic localized Context API arrays offering English & French universally across all interfaces.
+- **Role-Based Workflows**: Includes isolated endpoints for Customers, individual Sellers, and high-level Administrators.
+- **Robust Prisma Backend**: Integrated SQLite database tracking products, categorized assets, user security tokens, and dynamic chatbot logs.
+- **NextAuth Integration**: Modern session tracking leveraging bcrypt password hashing alongside 2-Factor Email Authentication workflows.
+- **Professional Logistical Maps**: Highly detailed static directories establishing international freight matrices & fair trade partner alignments.
+- **Floating Intelligent Nav Widgets**: Natively bundled with a contextual ChatBot and a secure end-to-end encrypted WhatsApp ordering forwarder.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## How to Navigate
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Customers (Public Route)
+- **Home**: Access premium cocoa spotlights, brand storytelling, and interactive bestsellers grids.
+- **Catalogue**: Browse the entire database dynamically with real-time text/category filtering hooks.
+- **Cart/Checkout**: Manage granular item capacities automatically factoring shipping logics before converting securely over WhatsApp.
+- **Information**: Navigate beautifully rendered `About Us`, `Shipping`, and `FAQ` pages for logistical transparency.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### Vendors / Sellers (Private Route)
+- **Registration**: Sign up actively selecting 'Vendor/Seller'. Accounts initialize in a locked state securely pending Admin overrides.
+- **Seller Dashboard (`/seller`)**: Upon validation, sellers manage their dedicated inventories. The interface provides unified CRUD capabilities (Add, Edit, View, Delete) identically mimicking standard catalog parameters.
+- **Settings**: Safely map independent store configurations natively.
 
-## Learn More
+### Administrators (Private Route)
+- **Admin Dashboard (`/admin`)**: Fully locked-down workspace. Admins have omnipotent oversight across global Catalog inventories, managing external Contacts, verifying Sellers, overriding product tags, and handling Chatbot matrices.
+- **Chatbot Settings (`/admin/chatbot`)**: Audit unmatched user queries recorded dynamically by the frontend bot interface to refine subsequent replies.
+- **Account Tuning (`/admin/settings`)**: Securely execute high-tier credential rotations forcing strict session terminations across active tokens.
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Setup Instructions
+1. Run `npm install` to hydrate all dependencies natively.
+2. Initialize your database structures using `npx prisma db push`.
+3. Feed the `.env` directory utilizing the identical mapping provided below:
+   - `NEXTAUTH_SECRET`
+   - `SMTP_USER` / `SMTP_HOST` / `SMTP_PASS` 
+4. Trigger the server via `npm run dev`. Navigate out to `http://localhost:3000` to execute testing locally.
