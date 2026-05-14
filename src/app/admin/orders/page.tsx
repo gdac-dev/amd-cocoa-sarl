@@ -46,7 +46,7 @@ export default async function AdminOrdersPage() {
                    <p className="text-sm text-cocoa-500">{order.customerPhone}</p>
                    <p className="text-xs text-cocoa-400">{order.customerCity}</p>
                 </td>
-                <td className="p-4 font-bold text-accent-secondary">${order.totalPrice.toFixed(2)}</td>
+                <td className="p-4 font-bold text-accent-secondary">{order.totalPrice.toLocaleString("fr-FR")} XAF</td>
                 <td className="p-4 text-sm">{order.paymentMethod}</td>
                 <td className="p-4">
                   <form action={updateStatus} className="flex flex-col space-y-2">

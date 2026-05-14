@@ -58,7 +58,7 @@ export default async function AdminDashboardPage() {
         <div className="bg-white p-6 rounded-xl border border-cocoa-100 shadow-sm flex items-center justify-between">
           <div>
             <p className="text-sm font-medium text-cocoa-500">{t("admin.total_revenue")}</p>
-            <p className="text-3xl font-bold text-primary mt-2">${totalRevenue.toFixed(2)}</p>
+            <p className="text-3xl font-bold text-primary mt-2">{totalRevenue.toLocaleString("fr-FR")} XAF</p>
           </div>
           <div className="p-4 bg-amber-50 rounded-full">
             <DollarSign className="h-6 w-6 text-amber-500" />
