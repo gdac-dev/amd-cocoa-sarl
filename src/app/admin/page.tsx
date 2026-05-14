@@ -1,5 +1,5 @@
 import { prisma } from "@/lib/prisma";
-import { Users, ShoppingBag, DollarSign, Package, Bot } from "lucide-react";
+import { Users, ShoppingBag, Package, Bot } from "lucide-react";
 import Link from "next/link";
 import { getTranslation } from "@/lib/translations";
 
@@ -60,8 +60,8 @@ export default async function AdminDashboardPage() {
             <p className="text-sm font-medium text-cocoa-500">{t("admin.total_revenue")}</p>
             <p className="text-3xl font-bold text-primary mt-2">{totalRevenue.toLocaleString("fr-FR")} XAF</p>
           </div>
-          <div className="p-4 bg-amber-50 rounded-full">
-            <DollarSign className="h-6 w-6 text-amber-500" />
+          <div className="p-4 bg-amber-50 rounded-full flex items-center justify-center">
+            <span className="text-xs font-extrabold text-amber-600 tracking-tight">XAF</span>
           </div>
         </div>
 
