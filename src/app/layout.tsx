@@ -3,6 +3,7 @@ import { Inter, Dancing_Script } from "next/font/google";
 import "./globals.css";
 import { CartProvider } from "@/context/CartContext";
 import { TranslationProvider } from "@/context/TranslationContext";
+import { AuthProvider } from "@/components/layout/AuthProvider";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { CartDrawer } from "@/components/layout/CartDrawer";
@@ -36,19 +37,21 @@ export default function RootLayout({
       className={`${inter.variable} ${dancingScript.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col font-sans">
-        <TranslationProvider>
-          <CartProvider>
-            <Navbar />
-            <main className="flex-1 mt-20 flex flex-col min-h-screen">
-              <PageLoader>
-                {children}
-              </PageLoader>
-            </main>
-            <Footer />
-            <CartDrawer />
-            <FloatingWidgets />
-          </CartProvider>
-        </TranslationProvider>
+        <AuthProvider>
+          <TranslationProvider>
+            <CartProvider>
+              <Navbar />
+              <main className="flex-1 mt-20 flex flex-col min-h-screen">
+                <PageLoader>
+                  {children}
+                </PageLoader>
+              </main>
+              <Footer />
+              <CartDrawer />
+              <FloatingWidgets />
+            </CartProvider>
+          </TranslationProvider>
+        </AuthProvider>
       </body>
     </html>
   );
