@@ -2,8 +2,10 @@
 
 import { useTransition, useState } from "react";
 import { createProduct, updateProduct } from "@/lib/actions/products";
+import { useTranslation } from "@/context/TranslationContext";
 
 export function ProductForm({ categories, cancelUrl, initialData }: { categories: any[], cancelUrl: string, initialData?: any }) {
+  const { t } = useTranslation();
   const [isPending, startTransition] = useTransition();
   const [unitInput, setUnitInput] = useState(initialData?.unit || "Unit(s)");
   const [isUnitDropdownOpen, setIsUnitDropdownOpen] = useState(false);
@@ -31,13 +33,13 @@ export function ProductForm({ categories, cancelUrl, initialData }: { categories
     <form onSubmit={handleSubmit} className="bg-white p-8 rounded-xl border border-cocoa-100 shadow-sm space-y-6 max-w-3xl" encType="multipart/form-data">
       <div className="grid grid-cols-2 gap-6">
         <div className="col-span-2 md:col-span-1">
-          <label className="block text-sm font-medium text-primary mb-1">Product Name</label>
+          <label className="block text-sm font-medium text-primary mb-1">{t("product_form.product_name")}</label>
           <input type="text" name="name" defaultValue={initialData?.name} required className="w-full px-4 py-2 border border-cocoa-200 rounded-md focus:border-accent outline-none" />
         </div>
         <div className="col-span-2 md:col-span-1">
-          <label className="block text-sm font-medium text-primary mb-1">Category</label>
+          <label className="block text-sm font-medium text-primary mb-1">{t("product_form.category")}</label>
           <select name="categoryId" defaultValue={initialData?.categoryId || ""} required className="w-full px-4 py-2 border border-cocoa-200 rounded-md focus:border-accent outline-none bg-white">
-            <option value="">Select Category...</option>
+            <option value="">{t("product_form.select_category")}</option>
             {categories.map(cat => (
               <option key={cat.id} value={cat.id}>{cat.name}</option>
             ))}
@@ -47,11 +49,11 @@ export function ProductForm({ categories, cancelUrl, initialData }: { categories
       
       <div className="grid grid-cols-3 gap-6">
         <div className="col-span-3 md:col-span-1">
-          <label className="block text-sm font-medium text-primary mb-1">Price (FCFA)</label>
+          <label className="block text-sm font-medium text-primary mb-1">{t("product_form.price")}</label>
           <input type="number" name="price" defaultValue={initialData?.price} min="0.01" step="0.01" required className="w-full px-4 py-2 border border-cocoa-200 rounded-md focus:border-accent outline-none" />
         </div>
         <div className="col-span-3 md:col-span-1 relative">
-          <label className="block text-sm font-medium text-primary mb-1">Unit</label>
+          <label className="block text-sm font-medium text-primary mb-1">{t("product_form.unit")}</label>
           <input type="hidden" name="unit" value={unitInput} />
           <input 
             type="text" 
@@ -71,40 +73,40 @@ export function ProductForm({ categories, cancelUrl, initialData }: { categories
               ) : null}
               {!isExactMatch && unitInput.trim() !== "" && (
                 <div onClick={() => setUnitInput(unitInput)} className="px-4 py-2 hover:bg-cocoa-50 cursor-pointer text-accent">
-                  Create "{unitInput}"...
+                  {t("product_form.create_unit")} &quot;{unitInput}&quot;...
                 </div>
               )}
             </div>
           )}
         </div>
         <div className="col-span-3 md:col-span-1">
-          <label className="block text-sm font-medium text-primary mb-1">Stock</label>
+          <label className="block text-sm font-medium text-primary mb-1">{t("product_form.stock")}</label>
           <input type="number" name="stock" defaultValue={initialData?.stock} required className="w-full px-4 py-2 border border-cocoa-200 rounded-md focus:border-accent outline-none" />
         </div>
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-primary mb-1">Product Image</label>
+        <label className="block text-sm font-medium text-primary mb-1">{t("product_form.product_image")}</label>
         <input type="file" name="image" accept="image/*" capture="environment" className="w-full px-4 py-2 border border-cocoa-200 rounded-md focus:border-accent outline-none file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-primary file:text-white hover:file:bg-primary-light" />
-        {initialData?.image && <p className="text-xs text-cocoa-400 mt-2">Current image: {initialData.image}</p>}
+        {initialData?.image && <p className="text-xs text-cocoa-400 mt-2">{t("product_form.current_image")} {initialData.image}</p>}
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-primary mb-1">Short Description</label>
+        <label className="block text-sm font-medium text-primary mb-1">{t("product_form.short_desc")}</label>
         <input type="text" name="shortDescription" defaultValue={initialData?.shortDescription} required className="w-full px-4 py-2 border border-cocoa-200 rounded-md focus:border-accent outline-none" />
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-primary mb-1">Full Description</label>
+        <label className="block text-sm font-medium text-primary mb-1">{t("product_form.full_desc")}</label>
         <textarea name="description" defaultValue={initialData?.description} rows={4} required className="w-full px-4 py-2 border border-cocoa-200 rounded-md focus:border-accent outline-none"></textarea>
       </div>
 
       <div className="flex gap-4 pt-4 border-t border-cocoa-100">
         <button type="submit" disabled={isPending} className="px-6 py-2 bg-primary text-white font-semibold rounded-md hover:bg-primary-light transition-colors disabled:opacity-50">
-          {isPending ? "Saving..." : (initialData ? "Update Product" : "Save Product")}
+          {isPending ? t("product_form.saving") : (initialData ? t("product_form.update_product") : t("product_form.save_product"))}
         </button>
         <a href={cancelUrl} className="px-6 py-2 bg-cocoa-100 text-primary font-semibold rounded-md hover:bg-cocoa-200 transition-colors">
-          Cancel
+          {t("product_form.cancel")}
         </a>
       </div>
     </form>

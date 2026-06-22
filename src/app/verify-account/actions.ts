@@ -82,7 +82,12 @@ export async function resendVerificationCode(prevState: any, formData: FormData)
     data: { twoFactorCode: code, twoFactorCodeExpires: expires },
   });
 
-  await send2FACode(email, code);
+  try {
+    await send2FACode(email, code);
+  } catch (emailError: any) {
+    console.error("Email resend failed:", emailError.message);
+    return { error: "Failed to send verification email. Please try again in a moment." };
+  }
 
   return { success: "A new verification code has been sent." };
 }

@@ -45,7 +45,13 @@ export async function registerUser(prevState: any, formData: FormData) {
       },
     });
 
-    await send2FACode(email, code);
+    // Send the verification email — surface failures to the user
+    try {
+      await send2FACode(email, code);
+    } catch (emailError: any) {
+      console.error("Email sending failed during registration:", emailError.message);
+      // User is created, but email failed. Don't block — they can resend from verify page.
+    }
 
   } catch (error) {
     if (error instanceof Error && error.message.includes("NEXT_REDIRECT")) {

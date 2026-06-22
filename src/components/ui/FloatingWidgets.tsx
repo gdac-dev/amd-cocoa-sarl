@@ -1,15 +1,17 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { MessageCircle, X, Send } from "lucide-react";
-import Image from "next/image";
+import { MessageCircle, X, Send, Loader2 } from "lucide-react";
+import { useTranslation } from "@/context/TranslationContext";
 
 export function FloatingWidgets() {
+  const { t } = useTranslation();
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [messages, setMessages] = useState<{role: "user" | "bot", text: string}[]>([
-    { role: "bot", text: "Hello! Welcome to AMD Cocoa. How can I help you today?" }
+    { role: "bot", text: t("chatbot.welcome") }
   ]);
   const [inputValue, setInputValue] = useState("");
+  const [isThinking, setIsThinking] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
@@ -18,83 +20,67 @@ export function FloatingWidgets() {
 
   useEffect(() => {
     scrollToBottom();
-  }, [messages, isChatOpen]);
+  }, [messages, isChatOpen, isThinking]);
 
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!inputValue.trim()) return;
+    if (!inputValue.trim() || isThinking) return;
 
     const userMsg = inputValue.trim();
-    setMessages(prev => [...prev, { role: "user", text: userMsg }]);
+    const newMessages = [...messages, { role: "user" as const, text: userMsg }];
+    setMessages(newMessages);
     setInputValue("");
+    setIsThinking(true);
 
-    // Advanced Dynamic Rule-Based Logic
-    const q = userMsg.toLowerCase();
-    let responseText = "";
+    try {
+      // Send to AI API with conversation history (last 10 messages for context)
+      const historyForAPI = newMessages.slice(-10).map(m => ({
+        role: m.role,
+        text: m.text,
+      }));
 
-    const rules = [
-      {
-        keywords: ["shipping", "delivery", "track", "freight", "pack"],
-        reply: "We offer local and international delivery! Local delivery within Cameroon takes 1-3 business days. For international wholesale orders, we route strictly via Douala port or designated air strips using secure climate-controlled logistics."
-      },
-      {
-        keywords: ["return", "refund", "replace", "damaged", "broken"],
-        reply: "Due to the perishable food-grade nature of our merchandise, we don't accept returns on unsealed batches. However, if your order arrives damaged, please contact Support within 48 hours with photographic evidence for a free replacement."
-      },
-      {
-        keywords: ["order", "buy", "purchase", "cart", "shop"],
-        reply: "You can place your order securely directly through our site! Ensure you pass through your Cart, and we will safely redirect you to finalize the transaction via our rigorous WhatsApp encryption."
-      },
-      {
-        keywords: ["payment", "money", "cash", "pay", "credit", "card", "om", "momo"],
-        reply: "We accept secure Mobile Money (MTN/Orange), Cash on Delivery, and direct Bank Transfers bridging optimal liquidity for buyers."
-      },
-      {
-        keywords: ["organic", "pest", "chemical", "quality", "safe"],
-        reply: "Absolutely! Our cocoa products are 100% organic, cultivated in deep heritage African soil strictly avoiding harmful chemical pesticides. You get pure authentic flavor profiles every time."
-      },
-      {
-        keywords: ["wholesale", "bulk", "b2b", "ton", "kg", "bag"],
-        reply: "We heavily support B2B wholesale ordering! Bulk orders crossing thresholds automatically route through structured invoicing to guarantee scalable optimal pricing."
-      },
-      {
-        keywords: ["hello", "hi ", "hey", "greetings"],
-        reply: "Hi there! I am your AMD Chatbot. Feel free to ask me about our premium cocoa products, wholesale limits, or international shipping details."
-      },
-      {
-        keywords: ["where", "location", "address", "company", "cameroon", "douala"],
-        reply: "We are headquartered deeply within Cameroon, coordinating exports directly from source partnering with heavyweights like Chococam and SIC Cacaos to map standard local excellence."
+      const res = await fetch("/api/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          message: userMsg,
+          history: historyForAPI.slice(0, -1), // exclude the current message from history
+        }),
+      });
+
+      const data = await res.json();
+
+      if (data.response) {
+        setMessages(prev => [...prev, { role: "bot", text: data.response }]);
+      } else if (data.fallback) {
+        // AI service unavailable — log the query and show fallback
+        setMessages(prev => [...prev, { role: "bot", text: t("chatbot.fallback") }]);
+        
+        // Log unanswered query to database
+        try {
+          await fetch("/api/chatbot", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ query: userMsg }),
+          });
+        } catch { /* silent */ }
+      } else {
+        setMessages(prev => [...prev, { role: "bot", text: t("chatbot.fallback") }]);
       }
-    ];
-
-    for (const rule of rules) {
-      if (rule.keywords.some(k => q.includes(k))) {
-        responseText = rule.reply;
-        break;
-      }
-    }
-
-    if (responseText) {
-      setTimeout(() => {
-        setMessages(prev => [...prev, { role: "bot", text: responseText }]);
-        scrollToBottom();
-      }, 700);
-    } else {
-      // Unknown Query - Log via API
-      setTimeout(() => {
-        setMessages(prev => [...prev, { role: "bot", text: "I'm currently still learning! I don't have the explicit answer to that right now, but I've successfully logged your question directly to our human Support Team who will be reviewing it shortly." }]);
-        scrollToBottom();
-      }, 700);
-
+    } catch {
+      // Network error — complete fallback
+      setMessages(prev => [...prev, { role: "bot", text: t("chatbot.fallback") }]);
+      
+      // Log the query for support review
       try {
         await fetch("/api/chatbot", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ query: userMsg }),
         });
-      } catch (e) {
-        console.error("Failed to log query");
-      }
+      } catch { /* silent */ }
+    } finally {
+      setIsThinking(false);
     }
   };
 
@@ -107,7 +93,7 @@ export function FloatingWidgets() {
           <div className="bg-primary text-beige px-4 py-3 flex justify-between items-center">
             <div className="flex items-center space-x-2">
               <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-              <span className="font-semibold">AMD Assistant</span>
+              <span className="font-semibold">{t("chatbot.assistant_name")}</span>
             </div>
             <button onClick={() => setIsChatOpen(false)} className="text-cocoa-200 hover:text-white">
               <X className="h-5 w-5" />
@@ -123,6 +109,14 @@ export function FloatingWidgets() {
                 </div>
               </div>
             ))}
+            {isThinking && (
+              <div className="flex justify-start">
+                <div className="max-w-[80%] rounded-lg px-3 py-2 text-sm bg-white border border-cocoa-100 text-cocoa-400 rounded-bl-none shadow-sm flex items-center gap-2">
+                  <Loader2 className="h-3 w-3 animate-spin" />
+                  {t("chatbot.thinking")}
+                </div>
+              </div>
+            )}
             <div ref={messagesEndRef} />
           </div>
 
@@ -132,10 +126,15 @@ export function FloatingWidgets() {
               type="text"
               value={inputValue}
               onChange={(e) => setInputValue(e.target.value)}
-              placeholder="Ask a question..."
-              className="flex-1 px-3 py-2 text-sm border border-cocoa-200 rounded-md focus:outline-none focus:border-accent text-primary"
+              placeholder={t("chatbot.placeholder")}
+              disabled={isThinking}
+              className="flex-1 px-3 py-2 text-sm border border-cocoa-200 rounded-md focus:outline-none focus:border-accent text-primary disabled:opacity-50"
             />
-            <button type="submit" className="p-2 bg-primary text-white rounded-md hover:bg-primary-light transition-colors">
+            <button
+              type="submit"
+              disabled={isThinking}
+              className="p-2 bg-primary text-white rounded-md hover:bg-primary-light transition-colors disabled:opacity-50"
+            >
               <Send className="h-4 w-4" />
             </button>
           </form>

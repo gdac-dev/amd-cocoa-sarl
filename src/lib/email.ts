@@ -3,8 +3,11 @@ import { Resend } from 'resend';
 /**
  * Sends a 2FA / account verification code via Resend (HTTP API).
  * Works on Vercel and all serverless environments — no SMTP ports needed.
+ *
+ * Returns true on success. Throws an error on failure so callers
+ * can surface it to the user instead of silently swallowing it.
  */
-export async function send2FACode(toEmail: string, code: string) {
+export async function send2FACode(toEmail: string, code: string): Promise<boolean> {
   // Always log the code to the terminal for dev visibility
   console.log('\n╔══════════════════════════════════════╗');
   console.log(`║  [AMD EMAIL] To: ${toEmail}`);
@@ -15,7 +18,11 @@ export async function send2FACode(toEmail: string, code: string) {
 
   if (!apiKey) {
     console.warn('[EMAIL] ⚠️  RESEND_API_KEY not set — email not sent. Code logged above.');
-    return true; // Don't block the UX in development
+    // In development, don't block UX; in production this should fail
+    if (process.env.NODE_ENV === 'production') {
+      throw new Error('Email service is not configured. Please contact support.');
+    }
+    return true;
   }
 
   const resend = new Resend(apiKey);
@@ -24,13 +31,15 @@ export async function send2FACode(toEmail: string, code: string) {
   // Use the verified Resend sender — swap with your own domain once verified in Resend dashboard
   const fromAddress = process.env.RESEND_FROM_EMAIL || 'onboarding@resend.dev';
 
-  try {
-    const { data, error } = await resend.emails.send({
-      from: `${senderName} <${fromAddress}>`,
-      to: [toEmail],
-      subject: '🍫 AMD Cocoa – Your Verification Code',
-      text: `Your verification code is: ${code}\n\nIt expires in 15 minutes. Do not share this code.`,
-      html: `
+  // Retry once on transient failures
+  for (let attempt = 1; attempt <= 2; attempt++) {
+    try {
+      const { data, error } = await resend.emails.send({
+        from: `${senderName} <${fromAddress}>`,
+        to: [toEmail],
+        subject: '🍫 AMD Cocoa – Your Verification Code',
+        text: `Your verification code is: ${code}\n\nIt expires in 15 minutes. Do not share this code.`,
+        html: `
 <!DOCTYPE html>
 <html>
 <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"></head>
@@ -76,18 +85,29 @@ export async function send2FACode(toEmail: string, code: string) {
   </table>
 </body>
 </html>
-      `,
-    });
+        `,
+      });
 
-    if (error) {
-      console.error('[EMAIL] ✗ Resend error:', error);
-      return false;
+      if (error) {
+        console.error(`[EMAIL] ✗ Resend error (attempt ${attempt}/2):`, JSON.stringify(error));
+        if (attempt === 2) {
+          throw new Error(`Email delivery failed: ${error.message || 'Unknown Resend error'}`);
+        }
+        // Wait before retry
+        await new Promise(r => setTimeout(r, 1000));
+        continue;
+      }
+
+      console.log(`[EMAIL] ✓ Delivered to ${toEmail} (id: ${data?.id})`);
+      return true;
+    } catch (err: any) {
+      console.error(`[EMAIL] ✗ Send failed (attempt ${attempt}/2):`, err.message);
+      if (attempt === 2) {
+        throw new Error(`Failed to send verification email: ${err.message}`);
+      }
+      await new Promise(r => setTimeout(r, 1000));
     }
-
-    console.log(`[EMAIL] ✓ Delivered to ${toEmail} (id: ${data?.id})`);
-    return true;
-  } catch (err: any) {
-    console.error('[EMAIL] ✗ Send failed:', err.message);
-    return false;
   }
+
+  return false;
 }

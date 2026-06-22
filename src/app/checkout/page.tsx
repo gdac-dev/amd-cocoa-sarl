@@ -146,17 +146,22 @@ export default function CheckoutPage() {
               <div className="bg-white p-8 rounded-xl shadow-sm border border-cocoa-50">
                 <h2 className="text-xl font-bold text-primary mb-6 border-b border-cocoa-50 pb-4">{t("checkout.payment_title")}</h2>
                 <div className="space-y-4">
-                  {['Mobile Money', 'Orange Money', 'Cash on Delivery', 'Bank Transfer'].map((method) => (
-                    <label key={method} className={`flex items-center p-4 border rounded-lg cursor-pointer transition-colors ${paymentMethod === method ? 'border-accent bg-amber-50/50' : 'border-cocoa-200 hover:border-accent'}`}>
+                  {[
+                    { key: 'Mobile Money', label: t("payment_methods.mobile_money") },
+                    { key: 'Orange Money', label: t("payment_methods.orange_money") },
+                    { key: 'Cash on Delivery', label: t("payment_methods.cash_on_delivery") },
+                    { key: 'Bank Transfer', label: t("payment_methods.bank_transfer") },
+                  ].map((method) => (
+                    <label key={method.key} className={`flex items-center p-4 border rounded-lg cursor-pointer transition-colors ${paymentMethod === method.key ? 'border-accent bg-amber-50/50' : 'border-cocoa-200 hover:border-accent'}`}>
                       <input 
                         type="radio" 
                         name="paymentMethod" 
-                        value={method} 
-                        checked={paymentMethod === method}
+                        value={method.key} 
+                        checked={paymentMethod === method.key}
                         onChange={(e) => setPaymentMethod(e.target.value)}
                         className="h-4 w-4 text-accent focus:ring-accent border-gray-300"
                       />
-                      <span className="ml-3 block text-sm font-medium text-primary">{method}</span>
+                      <span className="ml-3 block text-sm font-medium text-primary">{method.label}</span>
                     </label>
                   ))}
                 </div>

@@ -3,6 +3,7 @@ import Image from "next/image";
 import { Plus } from "lucide-react";
 import Link from "next/link";
 import { revalidatePath } from "next/cache";
+import { getTranslation } from "@/lib/translations";
 
 async function deleteProduct(formData: FormData) {
   "use server";
@@ -12,6 +13,7 @@ async function deleteProduct(formData: FormData) {
 }
 
 export default async function AdminProductsPage() {
+  const { t } = await getTranslation();
   const products = await prisma.product.findMany({
     orderBy: { createdAt: "desc" },
     include: { category: true }
@@ -21,12 +23,12 @@ export default async function AdminProductsPage() {
     <div>
       <div className="flex justify-between items-center mb-8">
         <div>
-          <h1 className="text-2xl font-bold">Products Management</h1>
-          <p className="text-cocoa-500">Manage your catalog, stock, and descriptions.</p>
+          <h1 className="text-2xl font-bold">{t("admin.products_title")}</h1>
+          <p className="text-cocoa-500">{t("admin.products_desc")}</p>
         </div>
         <Link href="/admin/products/new" className="flex items-center space-x-2 bg-primary text-white px-4 py-2 rounded shadow hover:bg-primary-light transition-colors">
           <Plus className="h-4 w-4" />
-          <span>Add New Product</span>
+          <span>{t("admin.add_product")}</span>
         </Link>
       </div>
 
@@ -34,12 +36,12 @@ export default async function AdminProductsPage() {
         <table className="w-full text-left border-collapse">
           <thead>
             <tr className="bg-cocoa-50 text-primary border-b border-cocoa-100 uppercase text-xs tracking-wider">
-              <th className="p-4">Image</th>
-              <th className="p-4">Name / Slug</th>
-              <th className="p-4">Category</th>
-              <th className="p-4">Price</th>
-              <th className="p-4">Stock</th>
-              <th className="p-4">Actions</th>
+              <th className="p-4">{t("admin.col_image")}</th>
+              <th className="p-4">{t("admin.col_name_slug")}</th>
+              <th className="p-4">{t("admin.col_category")}</th>
+              <th className="p-4">{t("admin.col_price")}</th>
+              <th className="p-4">{t("admin.col_stock")}</th>
+              <th className="p-4">{t("admin.col_actions")}</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-cocoa-50">
@@ -62,10 +64,10 @@ export default async function AdminProductsPage() {
                   </span>
                 </td>
                 <td className="p-4 flex space-x-3 items-center pt-6">
-                   <Link href={`/admin/products/${product.id}/edit`} className="text-blue-500 hover:underline text-sm font-medium">Edit</Link>
+                   <Link href={`/admin/products/${product.id}/edit`} className="text-blue-500 hover:underline text-sm font-medium">{t("admin.edit")}</Link>
                    <form action={deleteProduct}>
                      <input type="hidden" name="id" value={product.id} />
-                     <button type="submit" className="text-red-500 hover:underline text-sm font-medium">Delete</button>
+                     <button type="submit" className="text-red-500 hover:underline text-sm font-medium">{t("admin.delete")}</button>
                    </form>
                 </td>
               </tr>
@@ -73,7 +75,7 @@ export default async function AdminProductsPage() {
           </tbody>
         </table>
         {products.length === 0 && (
-          <div className="p-8 text-center text-cocoa-400">No products found.</div>
+          <div className="p-8 text-center text-cocoa-400">{t("admin.no_products")}</div>
         )}
       </div>
     </div>
